@@ -10,6 +10,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     name: Lint Code
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -35,6 +37,8 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     name: Build and Test
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -84,6 +88,8 @@ jobs:
   static-analysis:
     runs-on: ubuntu-latest
     name: Static Analysis
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
