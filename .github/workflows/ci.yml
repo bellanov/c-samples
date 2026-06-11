@@ -1,0 +1,105 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint Code
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+
+      - name: Check code formatting
+        run: |
+          # Find all C source and header files
+          find . -type f \( -name "*.c" -o -name "*.h" \) ! -path "./.git/*" > /tmp/files.txt
+          
+          # Check if clang-format would make changes
+          while IFS= read -r file; do
+            if [ -f "$file" ]; then
+              if ! clang-format --dry-run -Werror "$file" > /dev/null 2>&1; then
+                echo "File $file needs formatting"
+                clang-format "$file" > /tmp/formatted.c
+                diff -u "$file" /tmp/formatted.c || true
+              fi
+            fi
+          done < /tmp/files.txt
+
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build and Test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake lcov
+
+      - name: Create build directory
+        run: mkdir -p build
+
+      - name: Configure project
+        working-directory: build
+        run: cmake -DENABLE_COVERAGE=ON ..
+
+      - name: Build project
+        working-directory: build
+        run: cmake --build .
+
+      - name: Run tests
+        working-directory: build
+        run: ctest --output-on-failure
+
+      - name: Generate coverage report
+        working-directory: build
+        run: |
+          make coverage
+
+      - name: Display coverage summary
+        working-directory: build
+        run: |
+          echo "=== Code Coverage Report ==="
+          if [ -f test_coverage.info ]; then
+            lcov --summary test_coverage.info
+          else
+            echo "No coverage data available"
+          fi
+
+      - name: Upload coverage to artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: build/test_coverage.info
+          if-no-files-found: ignore
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    name: Static Analysis
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-tidy
+        run: sudo apt-get update && sudo apt-get install -y clang-tidy
+
+      - name: Create build directory
+        run: mkdir -p build
+
+      - name: Generate compile commands
+        working-directory: build
+        run: cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+
+      - name: Run clang-tidy
+        run: |
+          find . -type f \( -name "*.c" -o -name "*.h" \) ! -path "./.git/*" ! -path "./build/*" | while read file; do
+            echo "Analyzing $file"
+            clang-tidy -p build "$file" || true
+          done
