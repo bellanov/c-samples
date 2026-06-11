@@ -1,18 +1,20 @@
-#include <stdio.h>
-#include <string.h>
 #include "string_builder.h"
 #include "test_framework.h"
+#include <stdio.h>
+#include <string.h>
 
 /* Test cases */
 
-TEST_CASE(create_and_destroy) {
-    StringBuilderHandle* builder = string_builder_create(10);
+TEST_CASE(create_and_destroy)
+{
+    StringBuilderHandle *builder = string_builder_create(10);
     ASSERT_NOT_NULL(builder);
     string_builder_destroy(builder);
 }
 
-TEST_CASE(append_string) {
-    StringBuilderHandle* builder = string_builder_create(10);
+TEST_CASE(append_string)
+{
+    StringBuilderHandle *builder = string_builder_create(10);
     ASSERT_NOT_NULL(builder);
 
     StringBuilderStatus status = string_builder_append(builder, "Hello");
@@ -23,8 +25,9 @@ TEST_CASE(append_string) {
     string_builder_destroy(builder);
 }
 
-TEST_CASE(append_multiple_strings) {
-    StringBuilderHandle* builder = string_builder_create(10);
+TEST_CASE(append_multiple_strings)
+{
+    StringBuilderHandle *builder = string_builder_create(10);
     ASSERT_NOT_NULL(builder);
 
     string_builder_append(builder, "Hello");
@@ -37,8 +40,9 @@ TEST_CASE(append_multiple_strings) {
     string_builder_destroy(builder);
 }
 
-TEST_CASE(append_char) {
-    StringBuilderHandle* builder = string_builder_create(10);
+TEST_CASE(append_char)
+{
+    StringBuilderHandle *builder = string_builder_create(10);
     ASSERT_NOT_NULL(builder);
 
     string_builder_append_char(builder, 'H');
@@ -50,8 +54,9 @@ TEST_CASE(append_char) {
     string_builder_destroy(builder);
 }
 
-TEST_CASE(clear_builder) {
-    StringBuilderHandle* builder = string_builder_create(10);
+TEST_CASE(clear_builder)
+{
+    StringBuilderHandle *builder = string_builder_create(10);
     ASSERT_NOT_NULL(builder);
 
     string_builder_append(builder, "Test");
@@ -65,8 +70,9 @@ TEST_CASE(clear_builder) {
     string_builder_destroy(builder);
 }
 
-TEST_CASE(growth_capacity) {
-    StringBuilderHandle* builder = string_builder_create(5);
+TEST_CASE(growth_capacity)
+{
+    StringBuilderHandle *builder = string_builder_create(5);
     ASSERT_NOT_NULL(builder);
 
     /* Append string longer than initial capacity */
@@ -77,12 +83,13 @@ TEST_CASE(growth_capacity) {
     string_builder_destroy(builder);
 }
 
-TEST_CASE(null_pointer_handling) {
+TEST_CASE(null_pointer_handling)
+{
     /* Test with NULL builder */
     StringBuilderStatus status = string_builder_append(NULL, "test");
     ASSERT_INT_EQ(status, SB_ERR_NULL_PTR);
 
-    StringBuilderHandle* builder = string_builder_create(10);
+    StringBuilderHandle *builder = string_builder_create(10);
     ASSERT_NOT_NULL(builder);
 
     /* Test with NULL string */
@@ -93,7 +100,7 @@ TEST_CASE(null_pointer_handling) {
     size_t len = string_builder_length(NULL);
     ASSERT_INT_EQ(len, 0);
 
-    const char* str = string_builder_get(NULL);
+    const char *str = string_builder_get(NULL);
     ASSERT_NOT_NULL(str);
     ASSERT_STR_EQ(str, "");
 
@@ -103,8 +110,9 @@ TEST_CASE(null_pointer_handling) {
     string_builder_destroy(builder);
 }
 
-TEST_CASE(empty_string) {
-    StringBuilderHandle* builder = string_builder_create(10);
+TEST_CASE(empty_string)
+{
+    StringBuilderHandle *builder = string_builder_create(10);
     ASSERT_NOT_NULL(builder);
 
     /* Appending empty string should work */
@@ -115,8 +123,9 @@ TEST_CASE(empty_string) {
     string_builder_destroy(builder);
 }
 
-TEST_CASE(mixed_operations) {
-    StringBuilderHandle* builder = string_builder_create(10);
+TEST_CASE(mixed_operations)
+{
+    StringBuilderHandle *builder = string_builder_create(10);
     ASSERT_NOT_NULL(builder);
 
     string_builder_append(builder, "Hello");
@@ -137,7 +146,8 @@ TEST_CASE(mixed_operations) {
 }
 
 /* Main test runner */
-int main(void) {
+int main(void)
+{
     printf("Running string builder tests...\n\n");
 
     struct test_item tests[] = {

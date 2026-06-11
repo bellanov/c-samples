@@ -11,22 +11,23 @@
  * This is only visible to the implementation.
  */
 struct string_builder {
-    char* data;
+    char *data;
     size_t length;
     size_t capacity;
 };
 
-StringBuilderHandle* string_builder_create(size_t capacity) {
+StringBuilderHandle *string_builder_create(size_t capacity)
+{
     if (capacity == 0) {
         capacity = DEFAULT_CAPACITY;
     }
 
-    StringBuilderHandle* builder = (StringBuilderHandle*)malloc(sizeof(StringBuilderHandle));
+    StringBuilderHandle *builder = (StringBuilderHandle *) malloc(sizeof(StringBuilderHandle));
     if (builder == NULL) {
         return NULL;
     }
 
-    builder->data = (char*)malloc(capacity);
+    builder->data = (char *) malloc(capacity);
     if (builder->data == NULL) {
         free(builder);
         return NULL;
@@ -39,7 +40,8 @@ StringBuilderHandle* string_builder_create(size_t capacity) {
     return builder;
 }
 
-void string_builder_destroy(StringBuilderHandle* builder) {
+void string_builder_destroy(StringBuilderHandle *builder)
+{
     if (builder == NULL) {
         return;
     }
@@ -48,17 +50,18 @@ void string_builder_destroy(StringBuilderHandle* builder) {
     free(builder);
 }
 
-static StringBuilderStatus ensure_capacity(StringBuilderHandle* builder, size_t needed) {
+static StringBuilderStatus ensure_capacity(StringBuilderHandle *builder, size_t needed)
+{
     if (needed <= builder->capacity) {
         return SB_OK;
     }
 
-    size_t new_capacity = (size_t)(builder->capacity * GROWTH_FACTOR);
+    size_t new_capacity = (size_t) (builder->capacity * GROWTH_FACTOR);
     if (new_capacity < needed) {
         new_capacity = needed;
     }
 
-    char* new_data = (char*)realloc(builder->data, new_capacity);
+    char *new_data = (char *) realloc(builder->data, new_capacity);
     if (new_data == NULL) {
         return SB_ERR_ALLOC;
     }
@@ -68,7 +71,8 @@ static StringBuilderStatus ensure_capacity(StringBuilderHandle* builder, size_t 
     return SB_OK;
 }
 
-StringBuilderStatus string_builder_append(StringBuilderHandle* builder, const char* str) {
+StringBuilderStatus string_builder_append(StringBuilderHandle *builder, const char *str)
+{
     if (builder == NULL || str == NULL) {
         return SB_ERR_NULL_PTR;
     }
@@ -88,7 +92,8 @@ StringBuilderStatus string_builder_append(StringBuilderHandle* builder, const ch
     return SB_OK;
 }
 
-StringBuilderStatus string_builder_append_char(StringBuilderHandle* builder, char ch) {
+StringBuilderStatus string_builder_append_char(StringBuilderHandle *builder, char ch)
+{
     if (builder == NULL) {
         return SB_ERR_NULL_PTR;
     }
@@ -107,21 +112,24 @@ StringBuilderStatus string_builder_append_char(StringBuilderHandle* builder, cha
     return SB_OK;
 }
 
-size_t string_builder_length(const StringBuilderHandle* builder) {
+size_t string_builder_length(const StringBuilderHandle *builder)
+{
     if (builder == NULL) {
         return 0;
     }
     return builder->length;
 }
 
-const char* string_builder_get(const StringBuilderHandle* builder) {
+const char *string_builder_get(const StringBuilderHandle *builder)
+{
     if (builder == NULL) {
         return "";
     }
     return builder->data;
 }
 
-StringBuilderStatus string_builder_clear(StringBuilderHandle* builder) {
+StringBuilderStatus string_builder_clear(StringBuilderHandle *builder)
+{
     if (builder == NULL) {
         return SB_ERR_NULL_PTR;
     }

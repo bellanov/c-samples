@@ -5,7 +5,7 @@ ColumnLimit: 100
 UseTab: Never
 BreakBeforeBraces: Linux
 AllowShortFunctionsOnASingleLine: None
-AllowShortIfStatementsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 PointerAlignment: Right
 SpaceAfterCStyleCast: true
@@ -16,3 +16,4 @@ BinPackParameters: true
 ReflowComments: true
 MaxEmptyLinesToKeep: 2
 KeepEmptyLinesAtTheStartOfBlocks: false
+
